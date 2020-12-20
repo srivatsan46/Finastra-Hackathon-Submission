@@ -1,0 +1,111 @@
+﻿@{
+
+    ViewBag.Title = "Share";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Registration</title>
+
+    <link rel="icon" type="image/png" href="/assets/favicon-32x32.png" sizes="32x32">
+
+    <link rel="icon" type="image/png" href="/assets/favicon-16x16.png" sizes="16x16">
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/Content/bootstrap-theme.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+</head>
+
+<body body style=" padding-top: 15%;">
+
+    @using (Html.BeginForm())
+
+    {
+
+        <div class="container login">
+
+            <div class="row centered-form">
+
+                <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
+
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">
+
+                            <h3 class="panel-title">Share Document</h3>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <form role="form">
+
+                                <div class="row">
+
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+
+                                        <div class="form-group">
+
+                                            <input type="text" name="txtEmailaddress" id="txtMobileNumber" class="form-control input-sm" placeholder="Enter email address">
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <input class="btn btn-info btn-primary btn-sm" type="button" id="btnShare" value="Submit">
+
+
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    }
+
+</body>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+
+        $("#btnShare").click(function () {
+
+            alert("Document shared successfully");
+
+
+
+        });
+
+
+
+    });
+
+</script>
+
+</html>

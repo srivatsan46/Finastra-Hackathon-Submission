@@ -1,0 +1,170 @@
+﻿@{
+    Layout = null;
+}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <link rel="icon" type="image/png" href="/assets/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/assets/favicon-16x16.png" sizes="16x16">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <style>
+        .container {
+            padding-top: 15%;
+        }
+    </style>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        <div class="container login">
+            <div class="row centered-form">
+                <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Registration</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form role="form">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" name="txtMobileNumber" maxlength="10" id="txtMobileNumber" class="form-control input-sm" placeholder="Enter Mobile Number" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="divOTP">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                            <input type="password" name="txtOTP" maxlength="6" id="txtOTP" class="form-control input-sm" placeholder="Enter OTP" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57">
+                                        </div>
+                                    </div>
+                                </div>
+                                <input class="btn btn-info btn-primary btn-sm" type="button" id="btnReg" value="GetOTP">
+                                <input class="btn btn-info btn-primary btn-sm" type="button" id="btnReset" value="Reset">
+                                <small style="float: right;"><a href="/Home">Already registered?</a></small>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#txtOTP").prop("disabled", true);
+
+        $("#btnReg").click(function () {
+
+            var Mode = "Reg";
+
+            var phoneno = /^\d{10}$/;
+            if (!$('#txtMobileNumber').val().match(phoneno)) {
+                alert("Please enter valid mobile number");
+                return false;
+            }          
+
+            if ($("#btnReg").prop("value") == "GetOTP") {
+
+                var phoneno = /^\d{10}$/;
+                if (!$('#txtMobileNumber').val().match(phoneno)) {
+                    alert("Please enter valid mobile number");
+                    return false;
+                }
+               
+                var MobileNo = $('#txtMobileNumber').val();
+                $.ajax({
+                    type: 'post',
+                    cache: false,
+                    url: '/Home/GetOtp/',
+                    dataType: 'json',
+                    async: false,
+                    data: { mobile_number: MobileNo, mode: Mode },
+                    success: function (staus) {
+
+                        if (staus === "pending") {
+
+                            $("#btnReg").prop("value", "Confirm");
+                            $("#txtOTP").prop("disabled", false);
+                        }
+                        else if (staus === "registered") {
+                            alert("User is alredy registered");
+                            $("#txtOTP").prop("disabled", true);
+                        }
+
+                    },
+                    error: function (result) {
+                        alert('error');
+                    }
+                });
+            }
+            else if ($("#btnReg").prop("value") == "Confirm") {
+               
+                var phoneno = /^\d{6}$/;
+
+                if (!$('#txtOTP').val().match(phoneno)) {
+                    alert("Please enter valid verification code");
+                    return false;
+                }
+
+                var MobileNo = $('#txtMobileNumber').val();
+                var Otp = $('#txtOTP').val();
+
+                $.ajax({
+                    type: 'post',
+                    cache: false,
+                    url: '/Home/VerifyOtp/',
+                    dataType: 'json',
+                    async: false,
+                    data: { mobileNo: MobileNo, code: Otp },
+                    success: function (status)
+                    {
+                        if (status == "approved")
+                        {
+                            alert("You are successfully registered");
+                            $("#btnReg").prop("value", "GetOTP");
+                            $('#txtMobileNumber').val("");
+                            $("#txtOTP").prop("disabled", true);
+                            window.location.href = "/Home/About/";
+                        }
+                        else if (status == "400" || status == "pending")
+                        {
+                            alert("Please enter valid verification code");
+                            $("#btnLogin").prop("value", "Login");
+                            $("#txtOTP").val("");
+                            $("#txtOTP").prop("disabled", true);
+                        }
+                        else if (status == "Error")
+                        {
+                            alert("Unable to register due to technical error!!");
+                            $("#btnLogin").prop("value", "Login");
+                            $("#txtOTP").val("");
+                            $("#txtOTP").prop("disabled", true);
+                        }
+                    },
+                    error: function (result) {
+                        alert('error');
+                    }
+                });
+            }
+
+
+        });
+
+        $("#btnReset").click(function () {
+
+            $("#btnReg").prop("value", "GetOTP");
+            $('#txtMobileNumber').val("");
+            $("#txtOTP").prop("disabled", true);
+        });
+
+    });
+</script>
+</html>
+
+
